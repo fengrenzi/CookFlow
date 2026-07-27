@@ -6,11 +6,11 @@
 
 ## 项目简介
 
-本项目后端基于 **RuoYi-Vue** 进行二次开发，采用 **Spring Boot** 多模块架构，在保留 RuoYi 权限管理、代码生成等核心能力的基础上，扩展了食谱推荐、烹饪步骤可视化、食材百科、在线书籍、社区论坛等垂直业务功能。前端代码全部自研，独立于 RuoYi 前端体系。
-
-前端完全独立开发，分为两个项目：
+本项目前端代码完全自研，分为两个项目：
 - **CookFlowVue**（Vue 3 + TypeScript） — 覆盖用户端与管理端，用户端提供食谱浏览、食材查阅、书籍阅读、论坛互动等功能，管理端支持用户管理、菜谱审核、内容监控、敏感词管理等
-- **CookFlowManage**（Vue 2 + bpmn.js） — 工作流管理前端，用于 Flowable 流程的可视化设计与管理
+- **CookFlowManage**（Vue 2 + bpmn.js） — 管理员端，基于 bpmn.js 实现 Flowable 工作流审批流程的可视化设计与管理
+
+后端基于 **RuoYi-Vue** 进行二次开发，采用 **Spring Boot** 多模块架构，在保留 RuoYi 权限管理、代码生成等核心能力的基础上，扩展了食谱推荐、烹饪步骤可视化、食材百科、在线书籍、社区论坛等垂直业务功能。
 
 ## 技术栈
 
@@ -64,7 +64,7 @@ CookFlow/
 │   ├── flowable/              # Flowable 工作流引擎
 │   ├── common/                # 公共工具类
 │   ├── Hnit/                  # 业务模块（菜谱、食材、书籍、论坛、AI 助手等）
-│   └── CookFlowManage/        # 工作流管理前端（Vue 2 + bpmn.js）
+│   └── CookFlowManage/        # 管理员端（Vue 2 + bpmn.js，工作流管理界面）
 ├── CookFlowVue/               # 用户端 & 管理端前端（Vue 3 + TypeScript，完全独立开发）
 │   ├── src/
 │   │   ├── views/             # 页面组件

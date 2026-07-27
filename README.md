@@ -55,26 +55,26 @@ CookFlow 是一个基于 **Spring Boot + Vue 3** 的全栈 Web 应用，旨在�
 
 ```
 CookFlow/
-├── CookFlowJava/          # 后端（Spring Boot 多模块）
-│   └── CookFlowJava/
-│       ├── admin/         # 管理端 Controller
-│       ├── system/        # 系统模块（用户、角色、权限）
-│       ├── framework/     # 核心框架配置（安全、拦截器）
-│       ├── generator/     # 代码生成器
-│       ├── quartz/        # 定时任务
-│       ├── flowable/      # Flowable 工作流引擎
-│       ├── common/        # 公共工具类
-│       └── Hnit/          # 业务模块（菜谱、食材、书籍、论坛）
-├── CookFlowVue/           # 前端（Vue 3 + TypeScript）
-│   └── CookFlow2/
-│       ├── src/
-│       │   ├── views/     # 页面组件
-│       │   ├── store/     # Pinia 状态管理
-│       │   ├── router/    # 路由配置
-│       │   ├── api/       # API 请求封装
-│       │   └── components/# 公共组件
-│       └── ...
-└── screenshots/           # 项目截图
+├── CookFlowJava/              # 后端（Spring Boot 多模块）
+│   ├── admin/                 # 管理端 Controller
+│   ├── system/                # 系统模块（用户、角色、权限）
+│   ├── framework/             # 核心框架配置（安全、拦截器）
+│   ├── generator/             # 代码生成器
+│   ├── quartz/                # 定时任务
+│   ├── flowable/              # Flowable 工作流引擎
+│   ├── common/                # 公共工具类
+│   ├── Hnit/                  # 业务模块（菜谱、食材、书籍、论坛等）
+│   └── CookFlowManage/        # BPMN 工作流管理前端
+├── CookFlowVue/               # 前端（Vue 3 + TypeScript）
+│   ├── src/
+│   │   ├── views/             # 页面组件
+│   │   ├── store/             # Pinia 状态管理
+│   │   ├── router/            # 路由配置
+│   │   ├── api/               # API 请求封装
+│   │   └── components/        # 公共组件
+│   ├── public/                # 静态资源
+│   └── dist/                  # 构建产物
+└── screenshots/               # 项目截图
 ```
 
 ## 快速开始
@@ -82,11 +82,11 @@ CookFlow/
 ### 后端
 
 1. **环境要求**：JDK 1.8+、Maven 3.6+、MySQL
-2. **导入数据库**：执行 `CookFlowVue/CookFlow2/db_schema.sql`
-3. **修改配置**：`CookFlowJava/CookFlowJava/Hnit/main/resources/application.yml` 中配置数据库连接
+2. **导入数据库**：执行 `CookFlowVue/db_schema.sql`
+3. **修改配置**：`CookFlowJava/Hnit/main/resources/application.yml` 中配置数据库连接
 4. **启动**：
    ```bash
-   cd CookFlowJava/CookFlowJava
+   cd CookFlowJava
    mvn clean install
    java -jar admin/target/admin.jar
    ```
@@ -95,22 +95,24 @@ CookFlow/
 
 1. **环境要求**：Node.js 18+
 2. **安装依赖**：
-   ```bash
-   cd CookFlowVue/CookFlow2
-   npm install
-   ```
+    ```bash
+    cd CookFlowVue
+    npm install
+    ```
 3. **启动开发服务器**：
    ```bash
-   npm run dev
-   ```
+    cd CookFlowVue
+    npm run dev
+    ```
 4. **构建**：
    ```bash
-   npm run build
-   ```
+    cd CookFlowVue
+    npm run build
+    ```
 
 ## API 文档
 
-完整的 API 文档请参考 `CookFlowVue/CookFlow2/API_DOCUMENTATION.md` 或 OpenAPI 描述文件 `CookFlowVue/CookFlow2/openapi.yaml`。
+完整的 API 文档请参考 `CookFlowVue/API_DOCUMENTATION.md` 或 OpenAPI 描述文件 `CookFlowVue/openapi.yaml`。
 
 ## 项目亮点
 

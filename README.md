@@ -1,4 +1,4 @@
-# CookFlow - 智能食谱管理系统
+# 基于SpringBoot的食谱推荐与烹饪步骤可视化平台
 
 > 一个面向烹饪爱好者的全栈食谱管理平台，集成 AI 助手、在线烹饪书籍、食材百科与社区论坛，提供从食谱发现到采购清单的一站式体验。
 
@@ -6,11 +6,12 @@
 
 ## 项目简介
 
-CookFlow 是一个基于 **Spring Boot + Vue 3** 的全栈 Web 应用，旨在为用户提供丰富、互动、智能的食谱管理体验。用户可浏览分类菜谱、查看食材百科、阅读烹饪书籍、参与社区讨论，并借助 AI 助手获取个性化烹饪建议。
+本项目基于 **RuoYi-Vue**（前后端分离版）进行二次开发，后端采用 **Spring Boot**，前端采用 **Vue 3**，在保留 RuoYi 权限管理、代码生成等核心能力的基础上，扩展了食谱推荐、烹饪步骤可视化、食材百科、在线书籍、社区论坛等垂直业务功能。
 
-项目分为 **用户端** 和 **管理端**：
-- **用户端** — 访客与注册用户，浏览食谱、食材、书籍、论坛等
-- **管理端** — 管理员，用于用户管理、菜谱审核、内容监控、敏感词管理等
+项目分为 **用户端**、**管理端（Vue 3）** 与 **工作流管理端（Vue 2）**：
+- **用户端**（CookFlowVue） — 面向访客与注册用户，提供食谱浏览、食材查阅、书籍阅读、论坛互动等
+- **管理端**（CookFlowVue） — 管理员后台，支持用户管理、菜谱审核、内容监控、敏感词管理等
+- **工作流管理端**（CookFlowManage） — 基于 bpmn.js 的 Flowable 流程管理前端，用于设计与管理菜谱审核工作流
 
 ## 技术栈
 
@@ -55,7 +56,7 @@ CookFlow 是一个基于 **Spring Boot + Vue 3** 的全栈 Web 应用，旨在�
 
 ```
 CookFlow/
-├── CookFlowJava/              # 后端（Spring Boot 多模块）
+├── CookFlowJava/              # 后端（Spring Boot 多模块，基于 RuoYi-Vue）
 │   ├── admin/                 # 管理端 Controller
 │   ├── system/                # 系统模块（用户、角色、权限）
 │   ├── framework/             # 核心框架配置（安全、拦截器）
@@ -63,9 +64,9 @@ CookFlow/
 │   ├── quartz/                # 定时任务
 │   ├── flowable/              # Flowable 工作流引擎
 │   ├── common/                # 公共工具类
-│   ├── Hnit/                  # 业务模块（菜谱、食材、书籍、论坛等）
-│   └── CookFlowManage/        # BPMN 工作流管理前端
-├── CookFlowVue/               # 前端（Vue 3 + TypeScript）
+│   ├── Hnit/                  # 业务模块（菜谱、食材、书籍、论坛、AI 助手等）
+│   └── CookFlowManage/        # 工作流管理前端（Vue 2 + bpmn.js）
+├── CookFlowVue/               # 用户端 & 管理端前端（Vue 3 + TypeScript）
 │   ├── src/
 │   │   ├── views/             # 页面组件
 │   │   ├── store/             # Pinia 状态管理

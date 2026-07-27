@@ -1,0 +1,583 @@
+.cart-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--primary-color, #ff6b6b);
+}
+
+.cart-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-color, #333);
+}
+
+.clear-cart-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.3s ease;
+}
+
+.clear-cart-btn:hover {
+  background-color: var(--primary-color, #ff6b6b);
+  color: white;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius, 8px);
+}
+
+.empty-cart-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.empty-cart h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: var(--text-color, #333);
+}
+
+.empty-cart p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.cart-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .cart-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 购物车项目样式 */
+.cart-item {
+  background-color: white;
+  border-radius: var(--border-radius, 8px);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  padding-left: 50px;
+}
+
+.cart-item-recipe .recipe-item-content,
+.cart-item-book .book-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 菜谱项样式 */
+.recipe-item-header,
+.book-recipe-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipe-main-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.recipe-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--border-radius, 4px);
+}
+
+.recipe-info h4,
+.recipe-info h5 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: var(--text-color, #333);
+}
+
+.item-type {
+  background-color: rgba(255, 107, 107, 0.1);
+  color: var(--primary-color, #ff6b6b);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* 书籍项样式 */
+.book-item-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.book-image {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--border-radius, 4px);
+}
+
+.book-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: var(--text-color, #333);
+}
+
+.page-info {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 数量控制样式 */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background-color: var(--primary-color, #ff6b6b);
+  color: white;
+  border-color: var(--primary-color, #ff6b6b);
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 多选按钮样式 */
+.checkbox-container {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.item-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkbox-label {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.checkbox-label:hover {
+  border-color: var(--primary-color, #ff6b6b);
+}
+
+.item-checkbox:checked~.checkbox-label {
+  background-color: var(--primary-color, #ff6b6b);
+  border-color: var(--primary-color, #ff6b6b);
+}
+
+.item-checkbox:checked~.checkbox-label:after {
+  display: block;
+}
+
+.checkbox-label:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  box-sizing: border-box;
+}
+
+/* 食材列表样式 */
+.ingredients-list h5 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  padding: 8px;
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.3s ease;
+}
+
+.ingredient-image {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.ingredient-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ingredient-name {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-color, #333);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.ingredient-amount {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+/* 选中状态的食材区域样式 */
+.ingredients-list-selected h5 {
+  font-weight: 600;
+}
+
+.ingredient-item-selected {
+  padding: 8px;
+}
+
+.ingredient-image-selected {
+  width: 30px;
+  height: 30px;
+}
+
+/* 购物清单区域样式 */
+.shopping-list-section {
+  background-color: white;
+  border-radius: var(--border-radius, 8px);
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
+}
+
+.shopping-list-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  color: var(--text-color, #333);
+}
+
+.list-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.list-summary p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.list-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.generate-text-btn,
+.generate-image-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.3s ease;
+}
+
+.generate-text-btn:hover,
+.generate-image-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 购物清单预览样式 */
+.shopping-list-preview h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: var(--text-color, #333);
+}
+
+.ingredients-summary {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.summary-info {
+  flex: 1;
+}
+
+.summary-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+.summary-amount {
+  display: block;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 选中提示 */
+.selected-count {
+  color: var(--primary-color, #ff6b6b);
+  font-weight: 500;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: var(--border-radius, 8px);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content.image-modal {
+  max-width: 800px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-color, #333);
+}
+
+.close-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background-color: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--primary-color, #ff6b6b);
+}
+
+.modal-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 文本清单样式 */
+.text-list {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: var(--border-radius, 4px);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.copy-btn,
+.download-btn {
+  align-self: flex-start;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: var(--border-radius, 4px);
+  transition: all 0.3s ease;
+}
+
+/* 图片清单样式 */
+.image-list-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: var(--border-radius, 8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.image-list-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.image-list-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  color: var(--text-color, #333);
+}
+
+.image-list-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.image-list-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.image-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius, 4px);
+}
+
+.image-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.image-item-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color, #333);
+  margin-bottom: 5px;
+}
+
+.image-item-amount {
+  display: block;
+  font-size: 14px;
+  color: #666;
+}
+
+.image-list-footer {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.image-list-footer p {
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}

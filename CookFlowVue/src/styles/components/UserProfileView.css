@@ -1,0 +1,255 @@
+/* 全局样式重置，确保页面占满视口且无滚动条 */
+:deep(body) {
+  overflow: hidden;
+}
+
+/* 确保父容器占满剩余空间 */
+:deep(.el-main) {
+  padding: 0;
+  overflow: hidden;
+}
+
+.user-profile-container {
+  height: calc(100vh - 70px);
+  padding: 0;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.profile-layout {
+  display: flex;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 左侧边栏样式 */
+.sidebar {
+  width: 260px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.user-avatar-section {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-avatar {
+  margin: 0 auto 15px;
+}
+
+.sidebar-username {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  flex: 1;
+  margin-top: 20px;
+  overflow-y: auto;
+}
+
+.el-menu-vertical-demo {
+  border-right: none;
+}
+
+.el-menu-item {
+  height: 50px;
+  line-height: 50px;
+  padding: 0 20px;
+}
+
+.el-menu-item.is-active {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.message-badge {
+  margin-top: -20px;
+  margin-right: -10px;
+}
+
+/* 右侧内容区样式 */
+.content-area {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.content-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* 个人资料样式 */
+.profile-info {
+  padding: 10px 0;
+}
+
+/* 分类标签页样式 */
+.category-tabs {
+  margin-top: 20px;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+/* 菜谱网格样式 */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.recipe-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recipe-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.recipe-info {
+  padding: 15px;
+}
+
+.recipe-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.recipe-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* 问答列表样式 */
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qa-item {
+  padding: 15px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+}
+
+.qa-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.qa-content {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.qa-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 活动列表样式 */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.activity-item {
+  padding: 15px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+}
+
+.activity-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.activity-date,
+.activity-location,
+.activity-suggestion {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.activity-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #999;
+  margin-top: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .profile-layout {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .recipe-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-area {
+    max-height: calc(100vh - 280px);
+  }
+}

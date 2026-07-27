@@ -1,0 +1,387 @@
+.question-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 上部分样式 */
+.upper-section {
+    margin-bottom: 30px;
+}
+
+.question-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.questioner-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.questioner-info {
+    display: flex;
+    align-items: center;
+}
+
+.questioner-meta {
+    margin-left: 15px;
+}
+
+.questioner-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.publish-time {
+    color: #909399;
+    font-size: 14px;
+}
+
+.question-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #303133;
+}
+
+.question-description {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    color: #606266;
+}
+
+.description-content {
+    margin: 0;
+    word-wrap: break-word;
+    line-height: 1.6;
+    color: #606266;
+}
+
+.comment-text-full {
+    display: block;
+    line-height: 1.4;
+    font-size: 14px;
+    color: #606266;
+    word-wrap: break-word;
+    margin-bottom: 5px;
+}
+
+/* 调整统计信息样式 */
+.question-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #909399;
+}
+
+.interaction-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.interaction-buttons .el-button {
+    padding: 6px 16px;
+    border-radius: 4px;
+}
+
+.interaction-buttons .el-button--primary {
+    background-color: #0066ff;
+    border-color: #0066ff;
+}
+
+.interaction-buttons .el-button--primary.is-plain {
+    background-color: transparent;
+    color: #0066ff;
+    border-color: #0066ff;
+}
+
+.interaction-buttons .el-button--default.is-plain {
+    background-color: transparent;
+    color: #606266;
+    border-color: #dcdfe6;
+}
+
+
+
+/* 下部分样式 */
+.lower-section {
+    margin-top: 30px;
+}
+
+.answers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ebeef5;
+    margin-bottom: 20px;
+}
+
+.answers-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.answers-count h3 {
+    margin: 0;
+    color: #303133;
+    line-height: 0.3;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-label {
+    color: #606266;
+}
+
+.main-content {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    /* 确保子元素不会被拉伸到相同高度 */
+}
+
+.answers-container {
+    flex: 1;
+}
+
+.related-questions {
+    width: 280px;
+    /* 设置固定宽度 */
+    flex-shrink: 0;
+}
+
+/* 回答列表样式 */
+.answers-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.answer-item {
+    background: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid #ebeef5;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+}
+
+.answerer-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.answerer-meta {
+    margin-left: 10px;
+}
+
+.answerer-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.answer-time {
+    color: #909399;
+    font-size: 14px;
+}
+
+.answer-description {
+    margin-bottom: 20px;
+}
+
+.answer-content {
+    line-height: 1.8;
+    color: #606266;
+    word-wrap: break-word;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    /* 减小回答字体大小 */
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.answer-content.expanded {
+    -webkit-line-clamp: unset;
+}
+
+.answer-interactions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 评论区样式 */
+.comments-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ebeef5;
+}
+
+.comment-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 8px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.comment-username {
+    font-weight: 500;
+    color: #303133;
+}
+
+.comment-time {
+    color: #909399;
+    font-size: 12px;
+}
+
+.comment-content {
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 800px;
+    /* 设置一个合理的最大宽度 */
+    overflow: hidden;
+}
+
+.comment-text {
+    margin: 0;
+    word-wrap: break-word;
+    line-height: 1.6;
+    color: #606266;
+    font-size: 14px;
+    width: 100%;
+    display: block;
+    white-space: normal;
+    /* 允许正常换行 */
+}
+
+.comment-text {
+    margin: 0;
+    word-wrap: break-word;
+    line-height: 1.6;
+    color: #606266;
+    font-size: 14px;
+}
+
+.comment-text.expanded {
+    /* 展开状态不需要特殊样式限制 */
+}
+
+.comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.comment-actions .el-button {
+    padding: 0;
+    font-size: 12px;
+}
+
+.comment-actions .el-button.liked {
+    color: #f56c6c;
+}
+
+.comment-input-section {
+    margin-top: 20px;
+}
+
+.comment-input-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* 相关问题样式 */
+.related-questions {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    width: 280px;
+}
+
+.related-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #303133;
+    font-size: 18px;
+}
+
+.related-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #ebeef5;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.related-item:hover {
+    color: #409eff;
+}
+
+.related-item:last-child {
+    border-bottom: none;
+}
+
+.related-question-title {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #303133;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.related-stats {
+    font-size: 14px;
+    color: #909399;
+    display: flex;
+    gap: 15px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .interaction-buttons {
+        flex-direction: column;
+    }
+
+    .answers-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

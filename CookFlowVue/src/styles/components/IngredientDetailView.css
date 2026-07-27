@@ -1,0 +1,445 @@
+/* 主容器样式 */
+.ingredient-detail-container {
+  width: 1000px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 轮播图 */
+.carousel-section {
+  margin-bottom: 40px;
+  width: 100%;
+  position: relative;
+}
+
+/* 轮播容器 */
+.carousel-container {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  height: 350px;
+  overflow: visible;
+  /* 允许内容溢出，让旁边的图片能够显示出来 */
+}
+
+/* 轮播包装器 */
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 轮播项基础样式 */
+.carousel-item {
+  position: absolute;
+  transition: all 0.5s ease;
+  height: 100%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 当前活动项 */
+.carousel-item.active {
+  left: 0;
+  width: 100%;
+  z-index: 30;
+}
+
+/* 右侧预览项 - 露出1/3的宽度 */
+.carousel-item.next-preview {
+  left: calc(100% - 33.33%);
+  width: 100%;
+  z-index: 20;
+  opacity: 0.9;
+}
+
+/* 左侧预览项 - 露出1/3的宽度 */
+.carousel-item.prev-preview {
+  left: -66.67%;
+  width: 100%;
+  z-index: 20;
+  opacity: 0.9;
+}
+
+/* 第一张幻灯片时的主内容宽度 - 右边显示下一张1/3 */
+.carousel-wrapper.first-slide .carousel-item.active {
+  width: calc(100% - 33.33%);
+}
+
+/* 中间幻灯片时的主内容宽度 - 右边显示下一张1/3 */
+.carousel-wrapper.middle-slide .carousel-item.active {
+  width: calc(100% - 33.33%);
+  left: 0;
+}
+
+/* 最后一张幻灯片时的主内容宽度 - 完全显示 */
+.carousel-wrapper.last-slide .carousel-item.active {
+  width: 100%;
+  left: 0;
+}
+
+/* 最后一张幻灯片时的左侧按钮位置 - 固定在轮播图左边 */
+.carousel-wrapper.last-slide~.carousel-prev {
+  left: -20px;
+}
+
+/* 最后一张幻灯片时的右侧按钮位置 - 隐藏 */
+.carousel-wrapper.last-slide~.carousel-next {
+  display: none;
+}
+
+/* 最后一张幻灯片时的左侧按钮位置 */
+.carousel-wrapper.last-slide~.carousel-prev {
+  left: -20px;
+  display: block;
+}
+
+/* 第一张幻灯片时的左侧按钮位置 - 隐藏 */
+.carousel-wrapper.first-slide~.carousel-prev {
+  display: none;
+}
+
+/* 轮播内容样式 */
+.carousel-content {
+  display: flex;
+  height: 100%;
+}
+
+/* 轮播图片容器 */
+.carousel-image-container {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 轮播图片 */
+.carousel-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* 轮播描述区域 */
+.carousel-description {
+  width: 40%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 轮播标题 */
+.carousel-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #303133;
+}
+
+/* 轮播文本 */
+.carousel-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #606266;
+}
+
+/* 导航按钮样式 */
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 左侧导航按钮 */
+.carousel-prev {
+  left: -20px;
+}
+
+/* 右侧导航按钮 */
+.carousel-next {
+  right: -20px;
+}
+
+/* 轮播图指示器样式 */
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  gap: 8px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #dcdfe6;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.indicator.active {
+  width: 24px;
+  border-radius: 4px;
+  background-color: #67c23a;
+}
+
+/* 加载状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #606266;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #67c23a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 错误状态样式 */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #f56c6c;
+}
+
+.error-message {
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.retry-btn {
+  background-color: #67c23a;
+  border-color: #67c23a;
+}
+
+.retry-btn:hover {
+  background-color: #85ce61;
+  border-color: #85ce61;
+}
+
+/* 内容区域样式 - 选项卡容器 */
+.tabs-container {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+/* 选项卡样式 */
+.el-tabs {
+  width: 100%;
+}
+
+.el-tabs__header {
+  margin-bottom: 24px;
+}
+
+.el-tabs__nav-wrap {
+  background-color: #f5f7fa;
+  border-radius: 8px;
+}
+
+.el-tabs__nav {
+  padding: 0 16px;
+}
+
+.el-tabs__item {
+  padding: 0 24px;
+  height: 48px;
+  line-height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #606266;
+}
+
+.el-tabs__item.is-active {
+  color: #409eff;
+  font-weight: 600;
+}
+
+.el-tabs__active-bar {
+  height: 3px;
+  background-color: #409eff;
+}
+
+/* 内容部分样式 */
+.content-section {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+/* 分类容器 */
+.category-container {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 分类标题 */
+.category-title {
+  margin-bottom: 16px;
+  color: #303133;
+  font-size: 18px;
+  font-weight: 600;
+  border-left: 4px solid #67c23a;
+  padding-left: 12px;
+}
+
+/* 项目网格布局 */
+.items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 不同类型标签的样式 */
+.tip-item {
+  margin-bottom: 8px;
+  background-color: #67c23a;
+  border-color: #67c23a;
+}
+
+.step-item {
+  margin-bottom: 8px;
+  background-color: #409eff;
+  border-color: #409eff;
+}
+
+.substep-item {
+  margin-bottom: 8px;
+  background-color: #ecf5ff;
+  border-color: #d9ecff;
+  color: #409eff;
+}
+
+.knowledge-item {
+  margin-bottom: 8px;
+  background-color: #e6a23c;
+  border-color: #e6a23c;
+}
+
+/* 子分类样式 */
+.subcategories-container {
+  margin-top: 16px;
+  padding-left: 20px;
+  border-left: 2px dashed #dcdfe6;
+}
+
+.subcategory-container {
+  margin-bottom: 16px;
+}
+
+.subcategory-title {
+  margin-bottom: 12px;
+  color: #606266;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 空状态样式 */
+.empty-state {
+  padding: 40px 0;
+  text-align: center;
+  color: #909399;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ingredient-detail-container {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding: 10px;
+  }
+  
+  .carousel-container {
+    height: 280px;
+  }
+  
+  .carousel-content {
+    flex-direction: column;
+  }
+  
+  .carousel-image-container {
+    width: 100%;
+    height: 70%;
+    padding: 10px;
+  }
+  
+  .carousel-description {
+    width: 100%;
+    height: 30%;
+    padding: 15px;
+  }
+  
+  .carousel-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .carousel-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .tabs-container {
+    padding: 0 10px;
+  }
+  
+  .content-section {
+    padding: 15px;
+  }
+  
+  .category-container {
+    padding: 12px;
+  }
+  
+  .category-title {
+    font-size: 16px;
+  }
+  
+  .subcategory-title {
+    font-size: 14px;
+  }
+  
+  .items-grid {
+    gap: 8px;
+  }
+}

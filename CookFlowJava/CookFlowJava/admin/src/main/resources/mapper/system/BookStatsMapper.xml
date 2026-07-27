@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.BookStatsMapper">
+    <insert id="insert">
+        INSERT INTO book_stats (book_id, read_count, recommend_count, reading_count, sales_count, rating_score,
+                                rating_people)
+        VALUES (#{bookId}, #{readCount}, #{recommendCount}, #{readingCount}, #{salesCount}, #{ratingScore},
+                #{ratingPeople})
+    </insert>
+
+    <update id="update">
+        UPDATE book_stats
+        <set>
+            <if test="readCount != null">read_count = #{readCount},</if>
+            <if test="recommendCount != null">recommend_count = #{recommendCount},</if>
+            <if test="readingCount != null">reading_count = #{readingCount},</if>
+            <if test="salesCount != null">sales_count = #{salesCount},</if>
+            <if test="ratingScore != null">rating_score = #{ratingScore},</if>
+            <if test="ratingPeople != null">rating_people = #{ratingPeople},</if>
+            updated_at = NOW()
+        </set>
+        WHERE book_id = #{bookId}
+    </update>
+
+    <select id="selectByBookId" resultType="BookStats">
+        SELECT *
+        FROM book_stats
+        WHERE book_id = #{bookId}
+    </select>
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RecipeStatsMapper">
+    
+    <resultMap type="RecipeStats" id="RecipeStatsResult">
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="views"    column="views"    />
+        <result property="likes"    column="likes"    />
+        <result property="favorites"    column="favorites"    />
+        <result property="comments"    column="comments"    />
+        <result property="score"    column="score"    />
+        <result property="lastUpdated"    column="last_updated"    />
+    </resultMap>
+
+    <sql id="selectRecipeStatsVo">
+        select recipe_id, views, likes, favorites, comments, score, last_updated from recipe_stats
+    </sql>
+
+    <select id="selectRecipeStatsList" parameterType="RecipeStats" resultMap="RecipeStatsResult">
+        <include refid="selectRecipeStatsVo"/>
+        <where>  
+            <if test="views != null "> and views = #{views}</if>
+            <if test="likes != null "> and likes = #{likes}</if>
+            <if test="favorites != null "> and favorites = #{favorites}</if>
+            <if test="comments != null "> and comments = #{comments}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="lastUpdated != null "> and last_updated = #{lastUpdated}</if>
+        </where>
+    </select>
+    
+    <select id="selectRecipeStatsByRecipeId" parameterType="Long" resultMap="RecipeStatsResult">
+        <include refid="selectRecipeStatsVo"/>
+        where recipe_id = #{recipeId}
+    </select>
+
+    <insert id="insertRecipeStats" parameterType="RecipeStats">
+        insert into recipe_stats
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id,</if>
+            <if test="views != null">views,</if>
+            <if test="likes != null">likes,</if>
+            <if test="favorites != null">favorites,</if>
+            <if test="comments != null">comments,</if>
+            <if test="score != null">score,</if>
+            <if test="lastUpdated != null">last_updated,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">#{recipeId},</if>
+            <if test="views != null">#{views},</if>
+            <if test="likes != null">#{likes},</if>
+            <if test="favorites != null">#{favorites},</if>
+            <if test="comments != null">#{comments},</if>
+            <if test="score != null">#{score},</if>
+            <if test="lastUpdated != null">#{lastUpdated},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecipeStats" parameterType="RecipeStats">
+        update recipe_stats
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="views != null">views = #{views},</if>
+            <if test="likes != null">likes = #{likes},</if>
+            <if test="favorites != null">favorites = #{favorites},</if>
+            <if test="comments != null">comments = #{comments},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="lastUpdated != null">last_updated = #{lastUpdated},</if>
+        </trim>
+        where recipe_id = #{recipeId}
+    </update>
+
+    <delete id="deleteRecipeStatsByRecipeId" parameterType="Long">
+        delete from recipe_stats where recipe_id = #{recipeId}
+    </delete>
+
+    <delete id="deleteRecipeStatsByRecipeIds" parameterType="String">
+        delete from recipe_stats where recipe_id in 
+        <foreach item="recipeId" collection="array" open="(" separator="," close=")">
+            #{recipeId}
+        </foreach>
+    </delete>
+</mapper>

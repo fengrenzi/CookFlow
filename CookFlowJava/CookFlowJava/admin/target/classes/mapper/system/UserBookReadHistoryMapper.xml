@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.UserBookReadHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.hnit.system.domain.UserBookReadHistory">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="book_id" property="bookId" jdbcType="VARCHAR"/>
+        <result column="last_read_time" property="lastReadTime" jdbcType="TIMESTAMP"/>
+        <result column="progress" property="progress" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO user_book_read_history (id, user_id, book_id, last_read_time, progress)
+        VALUES (#{id}, #{userId}, #{bookId}, NOW(), #{progress})
+    </insert>
+
+    <update id="updateProgress">
+        UPDATE user_book_read_history
+        SET progress = #{progress}, last_read_time = NOW()
+        WHERE user_id = #{userId} AND book_id = #{bookId}
+    </update>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM user_book_read_history WHERE user_id = #{userId} ORDER BY last_read_time DESC
+    </select>
+
+    <select id="selectByUserAndBook" resultMap="BaseResultMap">
+        SELECT * FROM user_book_read_history WHERE user_id = #{userId} AND book_id = #{bookId}
+    </select>
+
+</mapper>

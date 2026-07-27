@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.SensitiveWordMapper">
+
+    <resultMap id="BaseResultMap" type="com.hnit.system.domain.SensitiveWord">
+        <id column="id" property="id"/>
+        <result column="word" property="word"/>
+        <result column="replace_with" property="replaceWith"/>
+        <result column="level" property="level"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, word, replace_with, level, create_time
+    </sql>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sensitive_word
+        <where>
+            <if test="word != null and word != ''">
+                AND word LIKE CONCAT('%', #{word}, '%')
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.hnit.system.domain.SensitiveWord">
+        INSERT INTO sensitive_word (id, word, replace_with, level, create_time)
+        VALUES (#{id}, #{word}, #{replaceWith}, #{level}, NOW())
+    </insert>
+
+    <update id="updateById" parameterType="com.hnit.system.domain.SensitiveWord">
+        UPDATE sensitive_word
+        SET word = #{word}, replace_with = #{replaceWith}, level = #{level}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM sensitive_word WHERE id = #{id}
+    </delete>
+
+</mapper>

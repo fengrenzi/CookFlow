@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.ForumActivityMapper">
+
+    <resultMap id="BaseResultMap" type="com.hnit.system.domain.ForumActivity">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="category" property="category"/>
+        <result column="tag" property="tag"/>
+        <result column="user_id" property="userId"/>
+        <result column="participant_count" property="participantCount"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <resultMap id="ActivityVoMap" type="com.hnit.system.domain.vo.ForumActivityVo">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="category" property="category"/>
+        <result column="tag" property="tag"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_avatar" property="userAvatar"/>
+        <result column="participant_count" property="participantCount"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+        <collection property="images" ofType="com.hnit.system.domain.ImagesRecord">
+            <id column="image_id" property="imageId"/>
+            <result column="image_url" property="imageUrl"/>
+            <result column="sort" property="sort"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.hnit.system.domain.ForumActivity">
+        INSERT INTO forum_activities
+        (id, title, summary, start_time, end_time, category, tag, user_id,
+         participant_count, status, created_at, updated_at)
+        VALUES (#{id}, #{title}, #{summary}, #{startTime}, #{endTime}, #{category}, #{tag},
+                #{userId}, #{participantCount}, #{status}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM forum_activities WHERE id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="com.hnit.system.domain.ForumActivity">
+        UPDATE forum_activities
+        SET title = #{title}, summary = #{summary}, start_time = #{startTime}, end_time = #{endTime},
+            category = #{category}, tag = #{tag}, user_id = #{userId},
+            participant_count = #{participantCount}, status = #{status}, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectPageList" resultMap="ActivityVoMap">
+        SELECT
+        a.id, a.title, a.summary, a.start_time, a.end_time, a.category, a.tag,
+        a.user_id, a.participant_count, a.status, a.created_at,
+        u.nick_name AS user_name, u.avatar AS user_avatar,
+        im.id AS image_id, CONCAT('/image/', im.stored_name) AS image_url, ir.sort
+        FROM forum_activities a
+        LEFT JOIN sys_user u ON a.user_id = u.user_id
+        LEFT JOIN images_record ir ON ir.table_name = 'forum_activity' AND ir.recipe_id = a.id
+        LEFT JOIN image_management im ON ir.image_id = im.id
+        <where>
+            a.status = 0
+            <if test="category != null and category != ''">
+                AND a.category = #{category}
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'hot'">a.participant_count DESC, a.created_at DESC</when>
+            <when test="sortBy == 'upcoming'">a.start_time ASC</when>
+            <otherwise>a.created_at DESC</otherwise>
+        </choose>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="selectCountByStatus" resultType="int">
+        SELECT COUNT(*) FROM forum_activities WHERE status = #{status}
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM forum_activities WHERE user_id = #{userId} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByIds" resultMap="BaseResultMap">
+        SELECT * FROM forum_activities WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

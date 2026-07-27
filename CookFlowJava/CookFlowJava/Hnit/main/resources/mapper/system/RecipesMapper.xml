@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RecipesMapper">
+    
+    <resultMap type="Recipes" id="RecipesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="image"    column="image"    />
+        <result property="category"    column="category"    />
+        <result property="prepTime"    column="prep_time"    />
+        <result property="cookTime"    column="cook_time"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectRecipesVo">
+        select id, name, description, image, category, prep_time, cook_time, created_by, created_at, updated_at from recipes
+    </sql>
+
+    <select id="selectRecipesList" parameterType="Recipes" resultMap="RecipesResult">
+        <include refid="selectRecipesVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="prepTime != null "> and prep_time = #{prepTime}</if>
+            <if test="cookTime != null "> and cook_time = #{cookTime}</if>
+            <if test="createdBy != null "> and created_by = #{createdBy}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="updatedAt != null "> and updated_at = #{updatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectRecipesById" parameterType="Long" resultMap="RecipesResult">
+        <include refid="selectRecipesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRecipes" parameterType="Recipes" useGeneratedKeys="true" keyProperty="id">
+        insert into recipes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null">description,</if>
+            <if test="image != null">image,</if>
+            <if test="category != null">category,</if>
+            <if test="prepTime != null">prep_time,</if>
+            <if test="cookTime != null">cook_time,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="image != null">#{image},</if>
+            <if test="category != null">#{category},</if>
+            <if test="prepTime != null">#{prepTime},</if>
+            <if test="cookTime != null">#{cookTime},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecipes" parameterType="Recipes">
+        update recipes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="prepTime != null">prep_time = #{prepTime},</if>
+            <if test="cookTime != null">cook_time = #{cookTime},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRecipesById" parameterType="Long">
+        delete from recipes where id = #{id}
+    </delete>
+
+    <delete id="deleteRecipesByIds" parameterType="String">
+        delete from recipes where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

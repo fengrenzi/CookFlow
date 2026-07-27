@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.TagMapMapper">
+    
+    <resultMap type="TagMap" id="TagMapResult">
+        <result property="tagId"    column="tag_id"    />
+        <result property="resourceType"    column="resource_type"    />
+        <result property="resourceId"    column="resource_id"    />
+    </resultMap>
+
+    <sql id="selectTagMapVo">
+        select tag_id, resource_type, resource_id from tag_map
+    </sql>
+
+    <select id="selectTagMapList" parameterType="TagMap" resultMap="TagMapResult">
+        <include refid="selectTagMapVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectTagMapByTagId" parameterType="Long" resultMap="TagMapResult">
+        <include refid="selectTagMapVo"/>
+        where tag_id = #{tagId}
+    </select>
+
+    <insert id="insertTagMap" parameterType="TagMap">
+        insert into tag_map
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">tag_id,</if>
+            <if test="resourceType != null">resource_type,</if>
+            <if test="resourceId != null">resource_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagId != null">#{tagId},</if>
+            <if test="resourceType != null">#{resourceType},</if>
+            <if test="resourceId != null">#{resourceId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTagMap" parameterType="TagMap">
+        update tag_map
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resourceType != null">resource_type = #{resourceType},</if>
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+        </trim>
+        where tag_id = #{tagId}
+    </update>
+
+    <delete id="deleteTagMapByTagId" parameterType="Long">
+        delete from tag_map where tag_id = #{tagId}
+    </delete>
+
+    <delete id="deleteTagMapByTagIds" parameterType="String">
+        delete from tag_map where tag_id in 
+        <foreach item="tagId" collection="array" open="(" separator="," close=")">
+            #{tagId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.MediaMapper">
+    
+    <resultMap type="Media" id="MediaResult">
+        <result property="id"    column="id"    />
+        <result property="ownerId"    column="owner_id"    />
+        <result property="type"    column="type"    />
+        <result property="url"    column="url"    />
+        <result property="storageKey"    column="storage_key"    />
+        <result property="mime"    column="mime"    />
+        <result property="size"    column="size"    />
+        <result property="thumbUrl"    column="thumb_url"    />
+        <result property="metadata"    column="metadata"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectMediaVo">
+        select id, owner_id, type, url, storage_key, mime, size, thumb_url, metadata, created_at from media
+    </sql>
+
+    <select id="selectMediaList" parameterType="Media" resultMap="MediaResult">
+        <include refid="selectMediaVo"/>
+        <where>  
+            <if test="ownerId != null "> and owner_id = #{ownerId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="storageKey != null  and storageKey != ''"> and storage_key = #{storageKey}</if>
+            <if test="mime != null  and mime != ''"> and mime = #{mime}</if>
+            <if test="size != null "> and size = #{size}</if>
+            <if test="thumbUrl != null  and thumbUrl != ''"> and thumb_url = #{thumbUrl}</if>
+            <if test="metadata != null  and metadata != ''"> and metadata = #{metadata}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectMediaById" parameterType="Long" resultMap="MediaResult">
+        <include refid="selectMediaVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertMedia" parameterType="Media" useGeneratedKeys="true" keyProperty="id">
+        insert into media
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ownerId != null">owner_id,</if>
+            <if test="type != null">type,</if>
+            <if test="url != null">url,</if>
+            <if test="storageKey != null">storage_key,</if>
+            <if test="mime != null">mime,</if>
+            <if test="size != null">size,</if>
+            <if test="thumbUrl != null">thumb_url,</if>
+            <if test="metadata != null">metadata,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ownerId != null">#{ownerId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="url != null">#{url},</if>
+            <if test="storageKey != null">#{storageKey},</if>
+            <if test="mime != null">#{mime},</if>
+            <if test="size != null">#{size},</if>
+            <if test="thumbUrl != null">#{thumbUrl},</if>
+            <if test="metadata != null">#{metadata},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMedia" parameterType="Media">
+        update media
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ownerId != null">owner_id = #{ownerId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="storageKey != null">storage_key = #{storageKey},</if>
+            <if test="mime != null">mime = #{mime},</if>
+            <if test="size != null">size = #{size},</if>
+            <if test="thumbUrl != null">thumb_url = #{thumbUrl},</if>
+            <if test="metadata != null">metadata = #{metadata},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMediaById" parameterType="Long">
+        delete from media where id = #{id}
+    </delete>
+
+    <delete id="deleteMediaByIds" parameterType="String">
+        delete from media where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

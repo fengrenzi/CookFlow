@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.CategoryMapper">
+    <resultMap type="com.hnit.system.domain.Category" id="CategoryResult">
+        <id property="id" column="id"/>
+        <result property="tableName" column="table_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="designation" column="designation"/>
+        <result property="imageId" column="image_id"/>
+        <result property="searchCount" column="search_count"/>
+        <result property="sort" column="sort"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectCategoryVo">
+        select id,
+               table_name,
+               parent_id,
+               designation,
+               image_id,
+               search_count,
+               sort,
+               create_time
+        from category
+    </sql>
+
+    <select id="selectCategoryById" parameterType="String" resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByTableName" parameterType="String" resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        where table_name = #{tableName}
+    </select>
+
+    <insert id="insertCategory" parameterType="Category">
+        insert into category (id, table_name, parent_id, designation, image_id, search_count, sort, create_time)
+        values (#{id}, #{tableName}, #{parentId}, #{designation}, #{imageId}, #{searchCount}, #{sort}, #{createTime})
+    </insert>
+
+    <update id="updateCategory" parameterType="Category">
+        update category
+        <set>
+            <if test="tableName != null">table_name = #{tableName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="designation != null">designation = #{designation},</if>
+            <if test="imageId != null">image_id = #{imageId},</if>
+            <if test="searchCount != null">search_count = #{searchCount},</if>
+            <if test="sort != null">sort = #{sort},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCategoryByIds" parameterType="String">
+        delete from category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 按搜索次数降序，取前 limit 条一级分类 -->
+    <select id="selectHotCategoryDto" resultType="com.hnit.system.domain.dto.CategoryDto">
+        SELECT c.id,
+               c.designation AS name,
+               c.search_count AS searchCount
+        FROM category c
+        WHERE c.table_name = #{tableName}
+          AND c.parent_id IS NOT NULL
+          AND c.parent_id != ''
+        ORDER BY c.search_count DESC
+            LIMIT #{limit}
+    </select>
+
+    <!-- 根据查询条件获取分类列表（返回 Category 对象） -->
+    <select id="selectCategoryList" parameterType="com.hnit.system.domain.dto.CategoryDto"
+            resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="tableName != null and tableName != ''">and table_name = #{tableName}</if>
+            <if test="parentId != null">and parent_id = #{parentId}</if>
+            <if test="name != null and name != ''">and designation like concat('%', #{name}, '%')</if>
+        </where>
+        order by sort asc, create_time asc
+    </select>
+
+    <!-- 查询该表下所有分类节点（带图片URL），用于构建树 -->
+    <select id="selectTreeNodesByTableName" resultType="CategoryDto">
+        SELECT c.id,
+               c.parent_id                           AS parentId,
+               c.designation                         AS name,
+               c.sort,
+               CONCAT(#{imgBaseUrl}, im.stored_name) AS imageUrl
+        FROM category c
+                 LEFT JOIN image_management im ON c.image_id = im.id
+        WHERE c.table_name = #{tableName}
+        ORDER BY c.parent_id ASC, c.sort ASC, c.create_time ASC
+    </select>
+
+    <!-- 查询热门分类（一级，带图片URL） -->
+    <select id="selectHotCategories" resultType="CategoryDto">
+        SELECT c.id,
+               c.designation                         AS name,
+               CONCAT(#{imgBaseUrl}, im.stored_name) AS imageUrl,
+               c.sort
+        FROM category c
+                 LEFT JOIN image_management im ON c.image_id = im.id
+        WHERE c.table_name = #{tableName}
+          AND (c.parent_id IS NULL OR c.parent_id = '')
+          AND c.search_count IS NOT NULL
+        ORDER BY c.search_count DESC
+            LIMIT #{limit}
+    </select>
+
+    <!-- 根据查询条件分页查询分类列表（带图片URL） -->
+    <select id="selectCategoryDtoList" resultType="CategoryDto">
+        SELECT
+        c.id,
+        c.parent_id AS parentId,
+        c.designation AS name,
+        c.search_count AS searchCount,
+        c.sort,
+        c.create_time AS createTime,
+        CONCAT(#{imgBaseUrl}, im.stored_name) AS imageUrl
+        FROM category c
+        LEFT JOIN image_management im ON c.image_id = im.id
+        <where>
+            <if test="query.id != null and query.id != ''">
+                AND c.id = #{query.id}
+            </if>
+            <if test="query.tableName != null and query.tableName != ''">
+                AND c.table_name = #{query.tableName}
+            </if>
+            <if test="query.parentId != null">
+                <choose>
+                    <when test="query.parentId == ''">
+                        AND c.parent_id IS NULL
+                    </when>
+                    <otherwise>
+                        AND c.parent_id = #{query.parentId}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="query.name != null and query.name != ''">
+                AND c.designation LIKE CONCAT('%', #{query.name}, '%')
+            </if>
+        </where>
+        ORDER BY c.sort ASC, c.create_time ASC
+    </select>
+
+    <!-- 查询指定表名下所有分类（含图片URL），用于构建树 -->
+    <select id="selectAllByTableNameWithImages" resultType="CategoryDto">
+        SELECT c.id,
+               c.parent_id                           AS parentId,
+               c.designation                         AS name,
+               c.search_count                        AS searchCount,
+               c.sort,
+               c.create_time                         AS createTime,
+               CONCAT(#{imgBaseUrl}, im.stored_name) AS imageUrl
+        FROM category c
+                 LEFT JOIN image_management im ON c.image_id = im.id
+        WHERE c.table_name = #{tableName}
+        ORDER BY c.sort ASC, c.create_time ASC
+    </select>
+
+    <select id="selectIngredientsWithSort" resultMap="CategoryResult">
+        SELECT id, designation, image_id, sort, parent_id
+        FROM category
+        WHERE table_name = 'ingredients' AND parent_id IS NOT NULL
+        ORDER BY sort ASC, designation ASC
+    </select>
+
+    <!-- 查询一级分类（parent_id 为 NULL） -->
+    <select id="selectRootCategoriesByTableName" resultMap="CategoryResult">
+        SELECT id, table_name, parent_id, designation, image_id, search_count, sort, create_time
+        FROM category
+        WHERE table_name = #{tableName}
+          AND (parent_id IS NULL OR parent_id = '')
+        ORDER BY sort ASC, create_time ASC
+    </select>
+
+    <!-- 查询二级分类（parent_id 不为 NULL），按 sort 排序 -->
+    <select id="selectSubCategoriesByTableName" resultMap="CategoryResult">
+        SELECT id, table_name, parent_id, designation, image_id, search_count, sort, create_time
+        FROM category
+        WHERE table_name = #{tableName}
+          AND parent_id IS NOT NULL
+          AND parent_id != ''
+        ORDER BY sort ASC, create_time ASC
+    </select>
+</mapper>

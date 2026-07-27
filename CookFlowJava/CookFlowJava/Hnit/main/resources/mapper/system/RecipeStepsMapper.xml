@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RecipeStepsMapper">
+    
+    <resultMap type="RecipeSteps" id="RecipeStepsResult">
+        <result property="id"    column="id"    />
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="stepIndex"    column="step_index"    />
+        <result property="content"    column="content"    />
+    </resultMap>
+
+    <sql id="selectRecipeStepsVo">
+        select id, recipe_id, step_index, content from recipe_steps
+    </sql>
+
+    <select id="selectRecipeStepsList" parameterType="RecipeSteps" resultMap="RecipeStepsResult">
+        <include refid="selectRecipeStepsVo"/>
+        <where>  
+            <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
+            <if test="stepIndex != null "> and step_index = #{stepIndex}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectRecipeStepsById" parameterType="Long" resultMap="RecipeStepsResult">
+        <include refid="selectRecipeStepsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRecipeSteps" parameterType="RecipeSteps" useGeneratedKeys="true" keyProperty="id">
+        insert into recipe_steps
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id,</if>
+            <if test="stepIndex != null">step_index,</if>
+            <if test="content != null">content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recipeId != null">#{recipeId},</if>
+            <if test="stepIndex != null">#{stepIndex},</if>
+            <if test="content != null">#{content},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecipeSteps" parameterType="RecipeSteps">
+        update recipe_steps
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id = #{recipeId},</if>
+            <if test="stepIndex != null">step_index = #{stepIndex},</if>
+            <if test="content != null">content = #{content},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRecipeStepsById" parameterType="Long">
+        delete from recipe_steps where id = #{id}
+    </delete>
+
+    <delete id="deleteRecipeStepsByIds" parameterType="String">
+        delete from recipe_steps where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

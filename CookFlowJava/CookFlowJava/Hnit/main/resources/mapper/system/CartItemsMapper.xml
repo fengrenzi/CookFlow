@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.CartItemsMapper">
+    
+    <resultMap type="CartItems" id="CartItemsResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="type"    column="type"    />
+        <result property="relatedId"    column="related_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="ingredients"    column="ingredients"    />
+        <result property="addedAt"    column="added_at"    />
+    </resultMap>
+
+    <sql id="selectCartItemsVo">
+        select id, user_id, type, related_id, quantity, ingredients, added_at from cart_items
+    </sql>
+
+    <select id="selectCartItemsList" parameterType="CartItems" resultMap="CartItemsResult">
+        <include refid="selectCartItemsVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="ingredients != null  and ingredients != ''"> and ingredients = #{ingredients}</if>
+            <if test="addedAt != null "> and added_at = #{addedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectCartItemsById" parameterType="Long" resultMap="CartItemsResult">
+        <include refid="selectCartItemsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCartItems" parameterType="CartItems" useGeneratedKeys="true" keyProperty="id">
+        insert into cart_items
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="relatedId != null">related_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="ingredients != null">ingredients,</if>
+            <if test="addedAt != null">added_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="relatedId != null">#{relatedId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="ingredients != null">#{ingredients},</if>
+            <if test="addedAt != null">#{addedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCartItems" parameterType="CartItems">
+        update cart_items
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="ingredients != null">ingredients = #{ingredients},</if>
+            <if test="addedAt != null">added_at = #{addedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCartItemsById" parameterType="Long">
+        delete from cart_items where id = #{id}
+    </delete>
+
+    <delete id="deleteCartItemsByIds" parameterType="String">
+        delete from cart_items where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

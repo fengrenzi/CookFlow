@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RegionFoodMapper">
+
+    <resultMap id="FoodCardResultMap" type="FoodCardDTO">
+        <result column="recipe_id" property="recipeId"/>
+        <result column="title" property="title"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="difficulty" property="difficulty"/>
+        <result column="prep_time" property="prepTime"/>
+        <result column="description" property="description"/>
+        <result column="is_specialty" property="isSpecialty"/>
+    </resultMap>
+
+    <select id="countFoodsByRegionCode" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM region_food rf
+                 INNER JOIN region r ON r.code = rf.region_code
+        WHERE r.code = #{regionCode}
+           OR r.parent_code = #{regionCode}
+    </select>
+
+    <select id="selectFoodsByRegionCode" resultMap="FoodCardResultMap">
+        SELECT rp.id                               AS recipe_id,
+               rp.title,
+               CONCAT(#{baseUrl}, img.stored_name) AS image_url,
+               rp.difficulty,
+               rp.prep_time,
+               rp.description,
+               rf.is_specialty
+        FROM region_food rf
+                 INNER JOIN region r ON r.code = rf.region_code
+                 INNER JOIN recipes rp ON rp.id = rf.recipe_id
+                 LEFT JOIN image_management img ON img.id = rp.image_id
+        WHERE r.code = #{regionCode}
+        ORDER BY rf.is_specialty DESC, rf.sort ASC, rp.id DESC
+    </select>
+
+</mapper>

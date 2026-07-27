@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.CommentMapper">
+
+    <resultMap id="CommentVoMap" type="com.hnit.system.domain.vo.CommentVo">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="rating" property="rating"/>
+        <result column="likes" property="likes"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="reply_count" property="replyCount"/>
+        <result column="is_liked" property="isLiked"/>
+        <association property="user" javaType="com.hnit.common.core.domain.entity.SysUser">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+        <collection property="images" ofType="com.hnit.system.domain.ImagesRecord">
+            <id column="image_id" property="imageId"/>
+            <result column="image_sort" property="sort"/>
+            <result column="image_create_time" property="createTime"/>
+        </collection>
+<!--        <collection property="replies" ofType="com.hnit.system.domain.vo.CommentReplyVo"-->
+<!--                    select="selectRepliesByParentId" column="id"/>-->
+    </resultMap>
+
+    <resultMap id="CommentReplyVoMap" type="com.hnit.system.domain.vo.CommentReplyVo">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="likes" property="likes"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="is_liked" property="isLiked"/>
+        <association property="user" javaType="com.hnit.common.core.domain.entity.SysUser">
+            <id column="user_id" property="userId"/>
+            <result column="user_name" property="userName"/>
+            <result column="avatar" property="avatar"/>
+        </association>
+    </resultMap>
+
+    <sql id="selectCommentVo">
+        SELECT
+        c.id,
+        c.content,
+        c.likes,
+        c.created_at,
+        c.reply_count,
+        u.user_id AS user_id,
+        u.user_name AS user_name,
+        u.avatar AS avatar,
+        ir.image_id AS image_id,
+        ir.sort AS image_sort,
+        ir.create_time AS image_create_time,
+        IF(cl.comment_id IS NOT NULL, 1, 0) AS is_liked
+        FROM comments c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        LEFT JOIN images_record ir ON c.id = ir.recipe_id AND ir.table_name = 'comment'
+        LEFT JOIN comment_likes cl ON c.id = cl.comment_id AND cl.user_id = #{currentUserId}
+        <where>
+            <if test="query.resourceType != null and query.resourceType != ''">
+                AND c.resource_type = #{query.resourceType}
+            </if>
+            <if test="query.resourceId != null and query.resourceId != ''">
+                AND c.resource_id = #{query.resourceId}
+            </if>
+            AND c.status = 'visible'
+            AND (c.parent_id IS NULL OR c.parent_id = '')
+        </where>
+        ORDER BY
+        <choose>
+            <when test="query.sort == 'likes_desc'">c.likes DESC, c.created_at DESC</when>
+            <otherwise>c.created_at DESC</otherwise>
+        </choose>
+        LIMIT #{query.pageSize} OFFSET #{offset}
+    </sql>
+
+    <select id="selectCommentList" resultMap="CommentVoMap">
+        <include refid="selectCommentVo"/>
+    </select>
+
+    <select id="countCommentList" resultType="int">
+        SELECT COUNT(*)
+        FROM comments c
+        <where>
+            <if test="resourceType != null and resourceType != ''">
+                AND c.resource_type = #{resourceType}
+            </if>
+            <if test="resourceId != null and resourceId != ''">
+                AND c.resource_id = #{resourceId}
+            </if>
+            AND c.status = 'visible'
+            AND (c.parent_id IS NULL OR c.parent_id = '')
+        </where>
+    </select>
+
+    <select id="selectById" resultType="com.hnit.system.domain.Comment">
+        SELECT *
+        FROM comments
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.hnit.system.domain.Comment">
+        INSERT INTO comments (id, resource_type, resource_id, parent_id, user_id, content, at_users, rating, likes,
+                              reply_count, status)
+        VALUES (#{id}, #{resourceType}, #{resourceId}, #{parentId}, #{userId}, #{content}, #{atUsers}, #{rating}, 0, 0,
+                'visible')
+    </insert>
+
+    <update id="incrementReplyCount">
+        UPDATE comments
+        SET reply_count = reply_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE comments
+        SET status = 'deleted'
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLikes">
+        UPDATE comments
+        SET likes = likes + #{increment}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectRepliesByParentId" resultMap="CommentReplyVoMap">
+        SELECT c.id,
+               c.content,
+               c.likes,
+               c.created_at,
+               u.user_id                           AS user_id,
+               u.user_name                         AS user_name,
+               u.avatar                            AS avatar,
+               IF(cl.comment_id IS NOT NULL, 1, 0) AS is_liked
+        FROM comments c
+                 LEFT JOIN sys_user u ON c.user_id = u.user_id
+                 LEFT JOIN comment_likes cl ON c.id = cl.comment_id AND cl.user_id = #{currentUserId}
+        WHERE c.parent_id = #{parentId}
+          AND c.status = 'visible'
+        ORDER BY c.created_at ASC
+            LIMIT #{limit}
+    </select>
+
+    <select id="selectRepliesByIds" resultType="ReplyVO">
+        SELECT
+        c.id,
+        c.content,
+        c.created_at AS createTime,
+        c.resource_type AS sourceType,
+        c.resource_id AS sourceId,
+        CASE
+        WHEN c.resource_type = 'recipe' THEN (SELECT title FROM recipes WHERE id = c.resource_id)
+        WHEN c.resource_type = 'forum_question' THEN (SELECT title FROM forum_questions WHERE id = c.resource_id)
+        WHEN c.resource_type = 'forum_share' THEN (SELECT title FROM forum_shares WHERE id = c.resource_id)
+        WHEN c.resource_type = 'forum_activity' THEN (SELECT title FROM forum_activities WHERE id = c.resource_id)
+        ELSE '未知来源'
+        END AS sourceTitle
+        FROM comments c
+        WHERE c.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY c.created_at DESC
+    </select>
+</mapper>

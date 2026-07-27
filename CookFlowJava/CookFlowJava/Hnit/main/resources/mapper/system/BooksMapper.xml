@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.BooksMapper">
+    
+    <resultMap type="Books" id="BooksResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="author"    column="author"    />
+        <result property="metadata"    column="metadata"    />
+    </resultMap>
+
+    <sql id="selectBooksVo">
+        select id, title, author, metadata from books
+    </sql>
+
+    <select id="selectBooksList" parameterType="Books" resultMap="BooksResult">
+        <include refid="selectBooksVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="metadata != null  and metadata != ''"> and metadata = #{metadata}</if>
+        </where>
+    </select>
+    
+    <select id="selectBooksById" parameterType="String" resultMap="BooksResult">
+        <include refid="selectBooksVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBooks" parameterType="Books">
+        insert into books
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null">title,</if>
+            <if test="author != null">author,</if>
+            <if test="metadata != null">metadata,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null">#{title},</if>
+            <if test="author != null">#{author},</if>
+            <if test="metadata != null">#{metadata},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBooks" parameterType="Books">
+        update books
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="metadata != null">metadata = #{metadata},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBooksById" parameterType="String">
+        delete from books where id = #{id}
+    </delete>
+
+    <delete id="deleteBooksByIds" parameterType="String">
+        delete from books where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

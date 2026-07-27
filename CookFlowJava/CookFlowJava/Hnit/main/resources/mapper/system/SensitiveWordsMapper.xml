@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.SensitiveWordsMapper">
+    
+    <resultMap type="SensitiveWords" id="SensitiveWordsResult">
+        <result property="id"    column="id"    />
+        <result property="word"    column="word"    />
+        <result property="category"    column="category"    />
+        <result property="replaceWith"    column="replace_with"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectSensitiveWordsVo">
+        select id, word, category, replace_with, created_at from sensitive_words
+    </sql>
+
+    <select id="selectSensitiveWordsList" parameterType="SensitiveWords" resultMap="SensitiveWordsResult">
+        <include refid="selectSensitiveWordsVo"/>
+        <where>  
+            <if test="word != null  and word != ''"> and word = #{word}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="replaceWith != null  and replaceWith != ''"> and replace_with = #{replaceWith}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectSensitiveWordsById" parameterType="Long" resultMap="SensitiveWordsResult">
+        <include refid="selectSensitiveWordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSensitiveWords" parameterType="SensitiveWords" useGeneratedKeys="true" keyProperty="id">
+        insert into sensitive_words
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="word != null and word != ''">word,</if>
+            <if test="category != null">category,</if>
+            <if test="replaceWith != null">replace_with,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="word != null and word != ''">#{word},</if>
+            <if test="category != null">#{category},</if>
+            <if test="replaceWith != null">#{replaceWith},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSensitiveWords" parameterType="SensitiveWords">
+        update sensitive_words
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="word != null and word != ''">word = #{word},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="replaceWith != null">replace_with = #{replaceWith},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSensitiveWordsById" parameterType="Long">
+        delete from sensitive_words where id = #{id}
+    </delete>
+
+    <delete id="deleteSensitiveWordsByIds" parameterType="String">
+        delete from sensitive_words where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

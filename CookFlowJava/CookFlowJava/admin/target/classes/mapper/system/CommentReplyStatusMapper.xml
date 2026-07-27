@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.CommentReplyStatusMapper">
+    <resultMap id="BaseResultMap" type="com.hnit.system.domain.CommentReplyStatus">
+        <id column="id" property="id"/>
+        <result column="comment_id" property="commentId"/>
+        <result column="target_user_id" property="targetUserId"/>
+        <result column="is_read" property="isRead"/>
+        <result column="read_time" property="readTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO comment_reply_status (id, comment_id, target_user_id, is_read, read_time, create_time)
+        VALUES (#{id}, #{commentId}, #{targetUserId}, #{isRead}, #{readTime}, NOW())
+    </insert>
+
+    <update id="updateReadStatus">
+        UPDATE comment_reply_status
+        SET is_read = #{isRead}, read_time = NOW()
+        WHERE comment_id = #{commentId} AND target_user_id = #{targetUserId}
+    </update>
+
+    <select id="countUnreadByUserId" resultType="int">
+        SELECT COUNT(*) FROM comment_reply_status
+        WHERE target_user_id = #{targetUserId} AND is_read = 0
+    </select>
+
+    <select id="selectByTargetUserId" resultMap="BaseResultMap">
+        SELECT * FROM comment_reply_status
+        WHERE target_user_id = #{targetUserId}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByCommentAndUser" resultMap="BaseResultMap">
+        SELECT * FROM comment_reply_status
+        WHERE comment_id = #{commentId} AND target_user_id = #{targetUserId}
+    </select>
+</mapper>

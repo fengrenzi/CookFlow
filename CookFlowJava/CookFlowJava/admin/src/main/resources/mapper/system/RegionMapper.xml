@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RegionMapper">
+
+    <resultMap id="BaseResultMap" type="Region">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="level" property="level"/>
+        <result column="lng" property="lng"/>
+        <result column="lat" property="lat"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByParentCode" resultMap="BaseResultMap">
+        SELECT *
+        FROM region
+        WHERE parent_code = #{parentCode}
+        ORDER BY name
+    </select>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        SELECT *
+        FROM region
+        WHERE code = #{code}
+    </select>
+
+    <select id="selectProvinces" resultMap="BaseResultMap">
+        SELECT *
+        FROM region
+        WHERE level = 1
+        ORDER BY name
+    </select>
+
+    <select id="selectCitiesByProvince" resultMap="BaseResultMap">
+        SELECT *
+        FROM region
+        WHERE parent_code = #{provinceCode}
+          AND level = 2
+        ORDER BY name
+    </select>
+
+    <select id="selectCountiesByCity" resultMap="BaseResultMap">
+        SELECT *
+        FROM region
+        WHERE parent_code = #{cityCode}
+          AND level = 3
+        ORDER BY name
+    </select>
+
+</mapper>

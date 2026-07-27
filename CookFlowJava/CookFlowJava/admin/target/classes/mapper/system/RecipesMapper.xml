@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.RecipesMapper">
+    <resultMap type="Recipes" id="RecipesResult">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <!-- 移除 imageId 映射 -->
+        <result property="description" column="description"/>
+        <result property="prepTime" column="prep_time"/>
+        <result property="cookTime" column="cook_time"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="favoriteCount" column="favorite_count"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="views" column="views"/>
+        <result property="likes" column="likes"/>
+        <result property="score" column="score"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectRecipesVo">
+        SELECT r.id,
+               r.title,
+               r.description,
+               r.prep_time,
+               r.cook_time,
+               r.difficulty,
+               r.favorite_count,
+               r.comment_count,
+               r.views,
+               r.likes,
+               r.score,
+               r.created_by,
+               r.created_at,
+               r.publish_time,
+               r.updated_at,
+               r.remark
+        FROM recipes r
+    </sql>
+
+    <select id="selectRecipesList" parameterType="RecipeQueryDto" resultMap="RecipesResult">
+        <include refid="selectRecipesVo"/>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (r.title LIKE CONCAT('%', #{keyword}, '%')
+                OR EXISTS (
+                SELECT 1 FROM recipe_ingredients ri
+                LEFT JOIN category c ON ri.category_id = c.id
+                WHERE ri.recipe_id = r.id AND c.designation LIKE CONCAT('%', #{keyword}, '%')
+                )
+                OR r.created_by IN (SELECT user_id FROM sys_user WHERE user_name LIKE CONCAT('%', #{keyword}, '%'))
+                )
+            </if>
+            <if test="categoryId != null and categoryId != ''">
+                AND EXISTS (
+                SELECT 1 FROM recipe_category rc
+                WHERE rc.recipe_id = r.id AND rc.category_id = #{categoryId}
+                )
+            </if>
+        </where>
+        <choose>
+            <when test="sort == 'newest'">
+                ORDER BY r.created_at DESC
+            </when>
+            <when test="sort == 'popular'">
+                ORDER BY r.favorite_count DESC
+            </when>
+            <when test="sort == 'difficulty'">
+                ORDER BY FIELD(r.difficulty, '简单', '中等', '困难')
+            </when>
+            <otherwise>
+                ORDER BY r.created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectRecipesById" parameterType="String" resultMap="RecipesResult">
+        <include refid="selectRecipesVo"/>
+        where r.id = #{id}
+    </select>
+
+    <insert id="insertRecipes" parameterType="Recipes">
+        insert into recipes (id, title, description, prep_time, cook_time, difficulty,
+                             favorite_count, comment_count, views, likes, score,
+                             created_by, created_at, publish_time, updated_at, remark)
+        values (#{id}, #{title}, #{description}, #{prepTime}, #{cookTime}, #{difficulty},
+                #{favoriteCount}, #{commentCount}, #{views}, #{likes}, #{score},
+                #{createdBy}, #{createdAt}, #{publishTime}, #{updatedAt}, #{remark})
+    </insert>
+
+    <update id="updateRecipes" parameterType="Recipes">
+        update recipes
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <!-- 移除 imageId 更新 -->
+            <if test="description != null">description = #{description},</if>
+            <if test="prepTime != null">prep_time = #{prepTime},</if>
+            <if test="cookTime != null">cook_time = #{cookTime},</if>
+            <if test="difficulty != null">difficulty = #{difficulty},</if>
+            <if test="favoriteCount != null">favorite_count = #{favoriteCount},</if>
+            <if test="commentCount != null">comment_count = #{commentCount},</if>
+            <if test="views != null">views = #{views},</if>
+            <if test="likes != null">likes = #{likes},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            updated_at = NOW()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRecipesByIds" parameterType="String">
+        delete from recipes where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHotRecipes" resultType="RecipesDto">
+        SELECT (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+                FROM images_record ir
+                         LEFT JOIN image_management im ON ir.image_id = im.id
+                WHERE ir.recipe_id = r.id
+                ORDER BY ir.sort ASC, ir.create_time ASC
+                   LIMIT 1) AS imgUrl,
+            r.id
+        FROM recipes r
+        WHERE r.favorite_count IS NOT NULL
+        ORDER BY r.favorite_count DESC
+            LIMIT #{limit}
+    </select>
+
+    <select id="selectRecommendedRecipes" resultType="RecipesDto">
+        SELECT (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+                FROM images_record ir
+                         LEFT JOIN image_management im ON ir.image_id = im.id
+                WHERE ir.recipe_id = r.id
+                ORDER BY ir.sort ASC, ir.create_time ASC
+                   LIMIT 1) AS imgUrl,
+            r.title AS name,
+            r.id
+        FROM recipes r
+        WHERE r.score IS NOT NULL
+        ORDER BY r.score DESC
+            LIMIT #{limit}
+    </select>
+
+    <select id="selectTodayRecommends" resultType="RecipesDto">
+        SELECT (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+                FROM images_record ir
+                         LEFT JOIN image_management im ON ir.image_id = im.id
+                WHERE ir.recipe_id = r.id
+                ORDER BY ir.sort ASC, ir.create_time ASC
+                   LIMIT 1) AS imgUrl,
+            r.title AS name,
+            r.id
+        FROM recipes r
+        WHERE r.views IS NOT NULL
+        ORDER BY r.views DESC
+            LIMIT #{limit}
+    </select>
+
+    <select id="selectImagesByRecipeId" resultType="String">
+        SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+        FROM images_record ir
+                 LEFT JOIN image_management im ON ir.image_id = im.id
+        WHERE ir.recipe_id = #{recipeId}
+        ORDER BY ir.sort ASC, ir.create_time ASC
+    </select>
+
+    <select id="selectRecipesDtoList" resultType="RecipesDto">
+        SELECT
+        r.id,
+        r.title,
+        r.description,
+        r.prep_time AS prepTime,
+        r.cook_time AS cookTime,
+        r.difficulty,
+        r.favorite_count AS favoriteCount,
+        r.comment_count AS commentCount,
+        r.views,
+        r.likes,
+        r.score,
+        r.created_by AS createdBy,
+        r.created_at AS createdAt,
+        r.publish_time AS publishTime,
+        r.updated_at AS updatedAt,
+        r.remark,
+        u.user_name AS authorName,
+        (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+        FROM image_management im
+        WHERE im.id = u.avatar) AS authorAvatar,
+        (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+        FROM images_record ir
+        LEFT JOIN image_management im ON ir.image_id = im.id
+        WHERE ir.recipe_id = r.id
+        ORDER BY ir.sort ASC, ir.create_time ASC
+        LIMIT 1) AS imgUrl,
+        (SELECT GROUP_CONCAT(c.designation ORDER BY c.sort SEPARATOR ',')
+        FROM recipe_category rc
+        LEFT JOIN category c ON rc.category_id = c.id
+        WHERE rc.recipe_id = r.id) AS categoryNamesStr,
+        (SELECT GROUP_CONCAT(c.designation ORDER BY c.designation SEPARATOR ',')
+        FROM recipe_ingredients ri
+        LEFT JOIN category c ON ri.category_id = c.id
+        WHERE ri.recipe_id = r.id) AS ingredientsStr
+        FROM recipes r
+        LEFT JOIN sys_user u ON r.created_by = u.user_id
+        <where>
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (r.title LIKE CONCAT('%', #{query.keyword}, '%')
+                OR EXISTS (
+                SELECT 1 FROM recipe_ingredients ri
+                LEFT JOIN category c ON ri.category_id = c.id
+                WHERE ri.recipe_id = r.id AND c.designation LIKE CONCAT('%', #{query.keyword}, '%')
+                )
+                OR u.user_name LIKE CONCAT('%', #{query.keyword}, '%')
+                )
+            </if>
+            <if test="query.categoryId != null and query.categoryId != ''">
+                AND EXISTS (
+                SELECT 1 FROM recipe_category rc
+                WHERE rc.recipe_id = r.id AND rc.category_id = #{query.categoryId}
+                )
+            </if>
+        </where>
+        <choose>
+            <when test="query.sort == 'newest'">
+                ORDER BY r.created_at DESC
+            </when>
+            <when test="query.sort == 'popular'">
+                ORDER BY r.favorite_count DESC
+            </when>
+            <when test="query.sort == 'difficulty'">
+                ORDER BY FIELD(r.difficulty, '简单', '中等', '困难')
+            </when>
+            <otherwise>
+                ORDER BY r.created_at DESC
+            </otherwise>
+        </choose>
+        <!-- 删除 LIMIT 和 OFFSET -->
+    </select>
+    <select id="selectRecipesDetailById" resultMap="RecipesDetailResultMap">
+        SELECT
+        r.id,
+        r.title,
+        r.description,
+        r.prep_time AS prepTime,
+        r.cook_time AS cookTime,
+        r.difficulty,
+        r.favorite_count AS favoriteCount,
+        r.comment_count AS commentCount,
+        r.views,
+        r.likes,
+        r.score,
+        r.created_by AS createdBy,
+        r.created_at AS createdAt,
+        r.publish_time AS publishTime,
+        r.updated_at AS updatedAt,
+        r.remark,
+        u.user_name AS authorName,
+        (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+        FROM image_management im
+        WHERE im.id = u.avatar) AS authorAvatar,
+        (SELECT GROUP_CONCAT(c.designation ORDER BY c.sort SEPARATOR ',')
+        FROM recipe_category rc
+        LEFT JOIN category c ON rc.category_id = c.id
+        WHERE rc.recipe_id = r.id) AS categoryNamesStr,
+        (SELECT GROUP_CONCAT(CONCAT(#{imgBaseUrl}, im.stored_name) ORDER BY ir.sort ASC, ir.create_time ASC SEPARATOR
+        ',')
+        FROM images_record ir
+        LEFT JOIN image_management im ON ir.image_id = im.id
+        WHERE ir.recipe_id = r.id) AS imgUrlsStr,
+        <!-- 新增：食材名称列表，逗号分隔 -->
+        (SELECT GROUP_CONCAT(c.designation ORDER BY c.designation SEPARATOR ',')
+        FROM recipe_ingredients ri
+        LEFT JOIN category c ON ri.category_id = c.id
+        WHERE ri.recipe_id = r.id) AS ingredientsStr
+        FROM recipes r
+        LEFT JOIN sys_user u ON r.created_by = u.user_id
+        WHERE r.id = #{id}
+    </select>
+
+    <resultMap id="RecipesDetailResultMap" type="RecipesDto">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="prepTime" column="prepTime"/>
+        <result property="cookTime" column="cookTime"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="favoriteCount" column="favoriteCount"/>
+        <result property="commentCount" column="commentCount"/>
+        <result property="views" column="views"/>
+        <result property="likes" column="likes"/>
+        <result property="score" column="score"/>
+        <result property="createdBy" column="createdBy"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="publishTime" column="publishTime"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="remark" column="remark"/>
+        <result property="authorName" column="authorName"/>
+        <result property="authorAvatar" column="authorAvatar"/>
+        <result property="categoryNamesStr" column="categoryNamesStr"/>
+        <result property="imgUrlsStr" column="imgUrlsStr"/>
+        <result property="ingredientsStr" column="ingredientsStr"/>
+    </resultMap>
+
+    <select id="selectRecommendedRecipesByIngredients" resultType="com.hnit.system.domain.dto.RecipesDto">
+        SELECT
+        r.id,
+        r.title,
+        r.score,
+        r.description,
+        (SELECT CONCAT(#{imgBaseUrl}, im.stored_name)
+        FROM images_record ir
+        LEFT JOIN image_management im ON ir.image_id = im.id
+        WHERE ir.recipe_id = r.id
+        ORDER BY ir.sort ASC, ir.create_time ASC
+        LIMIT 1) AS imgUrl,
+        COUNT(ri.id) AS matchCount
+        FROM recipes r
+        INNER JOIN recipe_ingredients ri ON r.id = ri.recipe_id
+        WHERE ri.category_id IN
+        <foreach collection="ingredientIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY r.id, r.title, r.score
+        ORDER BY matchCount DESC, r.score DESC
+    </select>
+
+    <select id="selectById" resultMap="RecipesResult">
+        SELECT * FROM recipes WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户ID查询发布的菜谱 -->
+    <select id="selectByUserId" resultMap="RecipesResult">
+        SELECT * FROM recipes WHERE created_by = #{userId} ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据ID列表批量查询菜谱 -->
+    <select id="selectByIds" resultMap="RecipesResult">
+        SELECT * FROM recipes WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

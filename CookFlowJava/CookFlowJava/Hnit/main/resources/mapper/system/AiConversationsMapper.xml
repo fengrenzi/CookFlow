@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.AiConversationsMapper">
+    
+    <resultMap type="AiConversations" id="AiConversationsResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="sessionKey"    column="session_key"    />
+        <result property="model"    column="model"    />
+        <result property="modelVersion"    column="model_version"    />
+        <result property="context"    column="context"    />
+        <result property="summary"    column="summary"    />
+        <result property="lastActiveAt"    column="last_active_at"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectAiConversationsVo">
+        select id, user_id, session_key, model, model_version, context, summary, last_active_at, created_at from ai_conversations
+    </sql>
+
+    <select id="selectAiConversationsList" parameterType="AiConversations" resultMap="AiConversationsResult">
+        <include refid="selectAiConversationsVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="sessionKey != null  and sessionKey != ''"> and session_key = #{sessionKey}</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="modelVersion != null  and modelVersion != ''"> and model_version = #{modelVersion}</if>
+            <if test="context != null  and context != ''"> and context = #{context}</if>
+            <if test="summary != null  and summary != ''"> and summary = #{summary}</if>
+            <if test="lastActiveAt != null "> and last_active_at = #{lastActiveAt}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectAiConversationsById" parameterType="Long" resultMap="AiConversationsResult">
+        <include refid="selectAiConversationsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAiConversations" parameterType="AiConversations" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_conversations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="sessionKey != null">session_key,</if>
+            <if test="model != null">model,</if>
+            <if test="modelVersion != null">model_version,</if>
+            <if test="context != null">context,</if>
+            <if test="summary != null">summary,</if>
+            <if test="lastActiveAt != null">last_active_at,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="sessionKey != null">#{sessionKey},</if>
+            <if test="model != null">#{model},</if>
+            <if test="modelVersion != null">#{modelVersion},</if>
+            <if test="context != null">#{context},</if>
+            <if test="summary != null">#{summary},</if>
+            <if test="lastActiveAt != null">#{lastActiveAt},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAiConversations" parameterType="AiConversations">
+        update ai_conversations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="sessionKey != null">session_key = #{sessionKey},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="modelVersion != null">model_version = #{modelVersion},</if>
+            <if test="context != null">context = #{context},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="lastActiveAt != null">last_active_at = #{lastActiveAt},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAiConversationsById" parameterType="Long">
+        delete from ai_conversations where id = #{id}
+    </delete>
+
+    <delete id="deleteAiConversationsByIds" parameterType="String">
+        delete from ai_conversations where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

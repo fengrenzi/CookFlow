@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.IngredientDetailsMapper">
+    
+    <resultMap type="IngredientDetails" id="IngredientDetailsResult">
+        <result property="ingredientId"    column="ingredient_id"    />
+        <result property="carousel"    column="carousel"    />
+        <result property="selectionTips"    column="selection_tips"    />
+        <result property="processingSteps"    column="processing_steps"    />
+        <result property="nutrition"    column="nutrition"    />
+        <result property="knowledgePoints"    column="knowledge_points"    />
+    </resultMap>
+
+    <sql id="selectIngredientDetailsVo">
+        select ingredient_id, carousel, selection_tips, processing_steps, nutrition, knowledge_points from ingredient_details
+    </sql>
+
+    <select id="selectIngredientDetailsList" parameterType="IngredientDetails" resultMap="IngredientDetailsResult">
+        <include refid="selectIngredientDetailsVo"/>
+        <where>  
+            <if test="carousel != null  and carousel != ''"> and carousel = #{carousel}</if>
+            <if test="selectionTips != null  and selectionTips != ''"> and selection_tips = #{selectionTips}</if>
+            <if test="processingSteps != null  and processingSteps != ''"> and processing_steps = #{processingSteps}</if>
+            <if test="nutrition != null  and nutrition != ''"> and nutrition = #{nutrition}</if>
+            <if test="knowledgePoints != null  and knowledgePoints != ''"> and knowledge_points = #{knowledgePoints}</if>
+        </where>
+    </select>
+    
+    <select id="selectIngredientDetailsByIngredientId" parameterType="String" resultMap="IngredientDetailsResult">
+        <include refid="selectIngredientDetailsVo"/>
+        where ingredient_id = #{ingredientId}
+    </select>
+
+    <insert id="insertIngredientDetails" parameterType="IngredientDetails">
+        insert into ingredient_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ingredientId != null">ingredient_id,</if>
+            <if test="carousel != null">carousel,</if>
+            <if test="selectionTips != null">selection_tips,</if>
+            <if test="processingSteps != null">processing_steps,</if>
+            <if test="nutrition != null">nutrition,</if>
+            <if test="knowledgePoints != null">knowledge_points,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ingredientId != null">#{ingredientId},</if>
+            <if test="carousel != null">#{carousel},</if>
+            <if test="selectionTips != null">#{selectionTips},</if>
+            <if test="processingSteps != null">#{processingSteps},</if>
+            <if test="nutrition != null">#{nutrition},</if>
+            <if test="knowledgePoints != null">#{knowledgePoints},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIngredientDetails" parameterType="IngredientDetails">
+        update ingredient_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carousel != null">carousel = #{carousel},</if>
+            <if test="selectionTips != null">selection_tips = #{selectionTips},</if>
+            <if test="processingSteps != null">processing_steps = #{processingSteps},</if>
+            <if test="nutrition != null">nutrition = #{nutrition},</if>
+            <if test="knowledgePoints != null">knowledge_points = #{knowledgePoints},</if>
+        </trim>
+        where ingredient_id = #{ingredientId}
+    </update>
+
+    <delete id="deleteIngredientDetailsByIngredientId" parameterType="String">
+        delete from ingredient_details where ingredient_id = #{ingredientId}
+    </delete>
+
+    <delete id="deleteIngredientDetailsByIngredientIds" parameterType="String">
+        delete from ingredient_details where ingredient_id in 
+        <foreach item="ingredientId" collection="array" open="(" separator="," close=")">
+            #{ingredientId}
+        </foreach>
+    </delete>
+</mapper>

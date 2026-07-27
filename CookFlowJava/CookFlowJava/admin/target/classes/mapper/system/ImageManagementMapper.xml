@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.ImageManagementMapper">
+    <resultMap type="com.hnit.system.domain.ImageManagement" id="ImageManagementResult">
+        <id property="id" column="id"/>
+        <result property="originalName" column="original_name"/>
+        <result property="storedName" column="stored_name"/>
+        <result property="storagePath" column="storage_path"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <sql id="selectImageManagementVo">
+        select id, original_name, stored_name, storage_path, created_at
+        from image_management
+    </sql>
+
+    <select id="selectImageManagementList" parameterType="com.hnit.system.domain.ImageManagement"
+            resultMap="ImageManagementResult">
+        <include refid="selectImageManagementVo"/>
+        <where>
+            <if test="originalName != null and originalName != ''">and original_name like concat('%', #{originalName},
+                '%')
+            </if>
+            <if test="storedName != null and storedName != ''">and stored_name = #{storedName}</if>
+        </where>
+    </select>
+
+    <select id="selectImageManagementById" parameterType="String" resultMap="ImageManagementResult">
+        <include refid="selectImageManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertImageManagement" parameterType="com.hnit.system.domain.ImageManagement">
+        insert into image_management (id, original_name, stored_name, storage_path, created_at)
+        values (#{id}, #{originalName}, #{storedName}, #{storagePath}, #{createdAt})
+    </insert>
+
+    <update id="updateImageManagement" parameterType="com.hnit.system.domain.ImageManagement">
+        update image_management
+        <set>
+            <if test="originalName != null">original_name = #{originalName},</if>
+            <if test="storedName != null">stored_name = #{storedName},</if>
+            <if test="storagePath != null">storage_path = #{storagePath},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteImageManagementByIds" parameterType="String">
+        delete from image_management where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectImageManagementByStoredName" resultMap="ImageManagementResult">
+        <include refid="selectImageManagementVo"/>
+        where stored_name = #{storedName}
+    </select>
+
+    <resultMap id="BaseResultMap" type="ImageManagement">
+        <id column="id" property="id"/>
+        <result column="original_name" property="originalName"/>
+        <result column="stored_name" property="storedName"/>
+        <result column="storage_path" property="storagePath"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM image_management WHERE id = #{id}
+    </select>
+
+    <select id="selectBatchIds" resultMap="BaseResultMap">
+        SELECT * FROM image_management WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

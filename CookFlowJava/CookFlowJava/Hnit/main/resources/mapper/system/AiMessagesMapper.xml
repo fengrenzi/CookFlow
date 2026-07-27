@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.AiMessagesMapper">
+    
+    <resultMap type="AiMessages" id="AiMessagesResult">
+        <result property="id"    column="id"    />
+        <result property="conversationId"    column="conversation_id"    />
+        <result property="sender"    column="sender"    />
+        <result property="content"    column="content"    />
+        <result property="contentType"    column="content_type"    />
+        <result property="metadata"    column="metadata"    />
+        <result property="tokenCount"    column="token_count"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectAiMessagesVo">
+        select id, conversation_id, sender, content, content_type, metadata, token_count, created_at from ai_messages
+    </sql>
+
+    <select id="selectAiMessagesList" parameterType="AiMessages" resultMap="AiMessagesResult">
+        <include refid="selectAiMessagesVo"/>
+        <where>  
+            <if test="conversationId != null "> and conversation_id = #{conversationId}</if>
+            <if test="sender != null  and sender != ''"> and sender = #{sender}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="contentType != null  and contentType != ''"> and content_type = #{contentType}</if>
+            <if test="metadata != null  and metadata != ''"> and metadata = #{metadata}</if>
+            <if test="tokenCount != null "> and token_count = #{tokenCount}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectAiMessagesById" parameterType="Long" resultMap="AiMessagesResult">
+        <include refid="selectAiMessagesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAiMessages" parameterType="AiMessages" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_messages
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="conversationId != null">conversation_id,</if>
+            <if test="sender != null">sender,</if>
+            <if test="content != null">content,</if>
+            <if test="contentType != null">content_type,</if>
+            <if test="metadata != null">metadata,</if>
+            <if test="tokenCount != null">token_count,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="conversationId != null">#{conversationId},</if>
+            <if test="sender != null">#{sender},</if>
+            <if test="content != null">#{content},</if>
+            <if test="contentType != null">#{contentType},</if>
+            <if test="metadata != null">#{metadata},</if>
+            <if test="tokenCount != null">#{tokenCount},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAiMessages" parameterType="AiMessages">
+        update ai_messages
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="conversationId != null">conversation_id = #{conversationId},</if>
+            <if test="sender != null">sender = #{sender},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="contentType != null">content_type = #{contentType},</if>
+            <if test="metadata != null">metadata = #{metadata},</if>
+            <if test="tokenCount != null">token_count = #{tokenCount},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAiMessagesById" parameterType="Long">
+        delete from ai_messages where id = #{id}
+    </delete>
+
+    <delete id="deleteAiMessagesByIds" parameterType="String">
+        delete from ai_messages where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

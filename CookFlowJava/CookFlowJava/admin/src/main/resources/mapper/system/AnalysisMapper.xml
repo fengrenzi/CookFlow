@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.AnalysisMapper">
+
+    <select id="getUserActiveLast7Days" resultType="UserActiveVO">
+        SELECT
+            DATE (created_at) AS date, COUNT (DISTINCT user_id) AS activeCounts
+        FROM (
+            SELECT created_at, user_id FROM comments
+            UNION ALL
+            SELECT created_at, user_id FROM user_interactions
+            UNION ALL
+            SELECT created_at, user_id FROM forum_shares
+            UNION ALL
+            SELECT created_at, user_id FROM forum_questions
+            UNION ALL
+            SELECT created_at, user_id FROM forum_answers
+            ) AS all_actions
+        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE (created_at)
+        ORDER BY date ASC
+    </select>
+
+    <select id="getDishHotTopN" resultType="DishHotVO">
+        SELECT title AS name,
+               (views + likes * 2 + comment_count * 3) AS value
+        FROM recipes
+        ORDER BY value DESC
+            LIMIT #{limit}
+    </select>
+
+</mapper>

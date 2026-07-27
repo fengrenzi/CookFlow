@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.ConversationSessionMapper">
+    <resultMap id="BaseResultMap" type="com.hnit.system.domain.ConversationSession">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="last_active" property="lastActive"/>
+        <result column="current_recipe_id" property="currentRecipeId"/>
+        <result column="current_step_index" property="currentStepIndex"/>
+        <result column="cooking_mode" property="cookingMode"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO conversation_session (user_id, start_time, last_active,
+                                          current_recipe_id, current_step_index,
+                                          cooking_mode, status)
+        VALUES (#{userId}, NOW(), NOW(), #{currentRecipeId}, #{currentStepIndex},
+                #{cookingMode}, #{status})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT *
+        FROM conversation_session
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectActiveByUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM conversation_session
+        WHERE user_id = #{userId}
+          AND status = 'active'
+        ORDER BY last_active DESC LIMIT 1
+    </select>
+
+    <update id="update">
+        UPDATE conversation_session
+        SET last_active        = NOW(),
+            current_recipe_id  = #{currentRecipeId},
+            current_step_index = #{currentStepIndex},
+            cooking_mode       = #{cookingMode},
+            status             = #{status}
+        WHERE id = #{id}
+    </update>
+</mapper>

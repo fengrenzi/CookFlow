@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.TagsMapper">
+
+    <resultMap id="BaseResultMap" type="Tags">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="use_count" property="useCount"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="Tags">
+        INSERT INTO tags (id, name, type, use_count, created_at)
+        VALUES (#{id}, #{name}, #{type}, #{useCount}, #{createdAt})
+    </insert>
+
+    <!-- 更新（根据 ID） -->
+    <update id="updateById" parameterType="Tags">
+        UPDATE tags
+        SET name      = #{name},
+            type      = #{type},
+            use_count = #{useCount}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据名称和类型查询单个标签 -->
+    <select id="selectOne" resultMap="BaseResultMap">
+        SELECT *
+        FROM tags
+        WHERE name = #{name}
+          AND type = #{type}
+    </select>
+
+    <!-- 批量根据 ID 查询 -->
+    <select id="selectBatchIds" resultMap="BaseResultMap">
+        SELECT * FROM tags WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 根据类型获取热门标签（按使用次数降序） -->
+    <select id="selectByTypeAndLimit" resultMap="BaseResultMap">
+        SELECT *
+        FROM tags
+        WHERE type = #{type}
+        ORDER BY use_count DESC LIMIT #{limit}
+    </select>
+
+    <select id="selectHotTags" resultType="Tags">
+        SELECT *
+        FROM tags
+        WHERE type = #{type}
+        ORDER BY use_count DESC
+        LIMIT #{limit}
+    </select>
+</mapper>

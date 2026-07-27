@@ -1,0 +1,13 @@
+com\hnit\generator\util\VelocityInitializer.class
+com\hnit\generator\util\VelocityUtils.class
+com\hnit\generator\service\IGenTableService.class
+com\hnit\generator\domain\GenTable.class
+com\hnit\generator\service\GenTableColumnServiceImpl.class
+com\hnit\generator\mapper\GenTableMapper.class
+com\hnit\generator\mapper\GenTableColumnMapper.class
+com\hnit\generator\config\GenConfig.class
+com\hnit\generator\controller\GenController.class
+com\hnit\generator\domain\GenTableColumn.class
+com\hnit\generator\util\GenUtils.class
+com\hnit\generator\service\IGenTableColumnService.class
+com\hnit\generator\service\GenTableServiceImpl.class

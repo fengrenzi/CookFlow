@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.IngredientsMapper">
+    
+    <resultMap type="Ingredients" id="IngredientsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="category"    column="category"    />
+        <result property="letter"    column="letter"    />
+        <result property="unit"    column="unit"    />
+        <result property="extra"    column="extra"    />
+    </resultMap>
+
+    <sql id="selectIngredientsVo">
+        select id, name, img_url, category, letter, unit, extra from ingredients
+    </sql>
+
+    <select id="selectIngredientsList" parameterType="Ingredients" resultMap="IngredientsResult">
+        <include refid="selectIngredientsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="letter != null  and letter != ''"> and letter = #{letter}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="extra != null  and extra != ''"> and extra = #{extra}</if>
+        </where>
+    </select>
+    
+    <select id="selectIngredientsById" parameterType="String" resultMap="IngredientsResult">
+        <include refid="selectIngredientsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertIngredients" parameterType="Ingredients">
+        insert into ingredients
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="category != null">category,</if>
+            <if test="letter != null">letter,</if>
+            <if test="unit != null">unit,</if>
+            <if test="extra != null">extra,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="category != null">#{category},</if>
+            <if test="letter != null">#{letter},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="extra != null">#{extra},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIngredients" parameterType="Ingredients">
+        update ingredients
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="letter != null">letter = #{letter},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="extra != null">extra = #{extra},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIngredientsById" parameterType="String">
+        delete from ingredients where id = #{id}
+    </delete>
+
+    <delete id="deleteIngredientsByIds" parameterType="String">
+        delete from ingredients where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

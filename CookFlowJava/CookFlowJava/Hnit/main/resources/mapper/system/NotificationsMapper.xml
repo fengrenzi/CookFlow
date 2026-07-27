@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.NotificationsMapper">
+    
+    <resultMap type="Notifications" id="NotificationsResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="type"    column="type"    />
+        <result property="payload"    column="payload"    />
+        <result property="isRead"    column="is_read"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectNotificationsVo">
+        select id, user_id, type, payload, is_read, created_at from notifications
+    </sql>
+
+    <select id="selectNotificationsList" parameterType="Notifications" resultMap="NotificationsResult">
+        <include refid="selectNotificationsVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="payload != null  and payload != ''"> and payload = #{payload}</if>
+            <if test="isRead != null "> and is_read = #{isRead}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectNotificationsById" parameterType="Long" resultMap="NotificationsResult">
+        <include refid="selectNotificationsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertNotifications" parameterType="Notifications" useGeneratedKeys="true" keyProperty="id">
+        insert into notifications
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="type != null">type,</if>
+            <if test="payload != null">payload,</if>
+            <if test="isRead != null">is_read,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="payload != null">#{payload},</if>
+            <if test="isRead != null">#{isRead},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNotifications" parameterType="Notifications">
+        update notifications
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="payload != null">payload = #{payload},</if>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNotificationsById" parameterType="Long">
+        delete from notifications where id = #{id}
+    </delete>
+
+    <delete id="deleteNotificationsByIds" parameterType="String">
+        delete from notifications where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

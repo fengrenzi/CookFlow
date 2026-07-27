@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnit.system.mapper.BookRecipesMapper">
+    
+    <resultMap type="BookRecipes" id="BookRecipesResult">
+        <result property="bookId"    column="book_id"    />
+        <result property="pageNumber"    column="page_number"    />
+        <result property="recipeId"    column="recipe_id"    />
+    </resultMap>
+
+    <sql id="selectBookRecipesVo">
+        select book_id, page_number, recipe_id from book_recipes
+    </sql>
+
+    <select id="selectBookRecipesList" parameterType="BookRecipes" resultMap="BookRecipesResult">
+        <include refid="selectBookRecipesVo"/>
+        <where>  
+            <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
+        </where>
+    </select>
+    
+    <select id="selectBookRecipesByBookId" parameterType="String" resultMap="BookRecipesResult">
+        <include refid="selectBookRecipesVo"/>
+        where book_id = #{bookId}
+    </select>
+
+    <insert id="insertBookRecipes" parameterType="BookRecipes">
+        insert into book_recipes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">book_id,</if>
+            <if test="pageNumber != null">page_number,</if>
+            <if test="recipeId != null">recipe_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">#{bookId},</if>
+            <if test="pageNumber != null">#{pageNumber},</if>
+            <if test="recipeId != null">#{recipeId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBookRecipes" parameterType="BookRecipes">
+        update book_recipes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pageNumber != null">page_number = #{pageNumber},</if>
+            <if test="recipeId != null">recipe_id = #{recipeId},</if>
+        </trim>
+        where book_id = #{bookId}
+    </update>
+
+    <delete id="deleteBookRecipesByBookId" parameterType="String">
+        delete from book_recipes where book_id = #{bookId}
+    </delete>
+
+    <delete id="deleteBookRecipesByBookIds" parameterType="String">
+        delete from book_recipes where book_id in 
+        <foreach item="bookId" collection="array" open="(" separator="," close=")">
+            #{bookId}
+        </foreach>
+    </delete>
+</mapper>

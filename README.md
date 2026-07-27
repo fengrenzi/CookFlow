@@ -10,10 +10,10 @@
 ![1.3管理端登录界面](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/1.3管理端登录界面.png)
 
 ### 2首页
-![2首页](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/2首页.png)
+![2首页](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/2首页.png?v=1)
 
 ### 3菜谱区
-![3菜谱区](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/3菜谱区.png)
+![3菜谱区](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/3菜谱区.png?v=1)
 
 ### 4菜谱详情页
 ![4菜谱详情页](https://cdn.jsdelivr.net/gh/fengrenzi/CookFlow@main/screenshots/4菜谱详情页.png)
